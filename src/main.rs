@@ -9,7 +9,7 @@ fn main() {
 
     let nmap = Command::new("nmap")
         .arg("-sP")
-        .arg("192.168.1.0/23")
+        .arg("192.168.10.0/24")
         .output()
         .expect("failed to execute process");
 
@@ -20,9 +20,14 @@ fn main() {
 
     let mut addrs = Vec::new();
     for line in text {
-        let start = line.find("(").unwrap_or(0);
-        let end = line.find(")").unwrap_or(0);
-        addrs.push(line[start+1..end].to_string());
+        let start = line.find("192").unwrap_or(0);
+        let end;
+        if line[line.len()-1..line.len()].to_string() == ")" {
+            end = line.find(")").unwrap_or(0);
+        } else {
+            end = line.len();
+        }
+        addrs.push(line[start..end].to_string());
     }
 
     for addr in addrs {
